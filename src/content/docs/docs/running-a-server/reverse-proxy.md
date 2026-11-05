@@ -36,6 +36,10 @@ If pages load but seeking or live updates fail, check that your proxy passes ran
 
 Silo's [TCP tuning for remote viewers](/docs/configuration#tcp-tuning-for-remote-viewers) covers only connections that end at Silo. Behind Caddy, the viewer's connection ends at Caddy, so the tuning covers Caddy's connection to Silo, and the connection to the viewer uses the host's own TCP settings.
 
+:::caution[Remote viewers buffering over HTTP/3]
+If your proxy serves HTTP/3, as Caddy does whenever UDP port 443 reaches it, remote streams can slow to a few Mbps on connections that drop packets. Caddy's and nginx's HTTP/3 lack the BBR congestion control that keeps TCP fast on those links. Outside speed tests still look fine, but Silo's own [speed test](/docs/preferences#test-your-connection-speed) is slow too. Turn off HTTP/3 for Silo's hostname: in Caddy, add `header Alt-Svc clear` to the site block.
+:::
+
 ## Other addresses clients use
 
 Remote proxy nodes and S3 storage can hand clients their own addresses. Those must also be reachable and use HTTPS; the main proxy doesn't forward them.
